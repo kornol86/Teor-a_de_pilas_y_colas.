@@ -1,4 +1,5 @@
 
+/// <summary>Punto de entrada: arma la simulación de doble línea de ingreso.</summary>
 public class Program
 {
     private static long _contadorTickets = 0;
@@ -53,5 +54,31 @@ public class Program
         var numerosAsignados = historial.Where(r => r.Exito).Select(r => r.Asiento!.Numero).ToList();
         bool sinDuplicados = numerosAsignados.Distinct().Count() == numerosAsignados.Count;
         Console.WriteLine($"\nVerificación: {(sinDuplicados ? "OK, sin asientos duplicados" : "ERROR: hay asientos duplicados")}");
+
+        // ===== REPORTERÍA: visualizar y consultar la estructura completa =====
+
+        // 1) Reporte visual de los 100 asientos (libres y ocupados)
+        auditorio.ImprimirReporteConsola();
+
+        // 2) Consultas puntuales de ejemplo sobre la estructura
+        var asiento50 = auditorio.ConsultarAsiento(50);
+        Console.WriteLine($"\nConsulta puntual -> Asiento #50: " +
+            $"{(asiento50!.Ocupado ? $"ocupado por {asiento50.Ocupante!.Nombre}" : "libre")}");
+
+        var libres = auditorio.ConsultarAsientosLibres();
+        Console.WriteLine($"Consulta -> Asientos libres restantes: {libres.Count} " +
+            $"(ej: {string.Join(", ", libres.Take(5).Select(a => a.Numero))}{(libres.Count > 5 ? "..." : "")})");
+
+        var ocupados = auditorio.ConsultarAsientosOcupados();
+        Console.WriteLine($"Consulta -> Asientos ocupados: {ocupados.Count}");
+
+        var primerAsistente = fila1.First();
+        var asientoDePersona = auditorio.ConsultarAsientoPorAsistente(primerAsistente.Nombre);
+        Console.WriteLine($"Consulta -> Asiento de '{primerAsistente.Nombre}': " +
+            $"{(asientoDePersona != null ? $"#{asientoDePersona.Numero}" : "no encontrado")}");
+
+//evita que la consola se cierre inmediatamente después de mostrar los resultados
+            Console.WriteLine("\nPresione cualquier tecla para salir...");
+            Console.ReadKey();
     }
 }
